@@ -38,6 +38,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'users.apps.UsersConfig',
     'tasks_app.apps.TasksAppConfig',
     'django.contrib.admin',
     'django.contrib.auth',
