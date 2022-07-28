@@ -1,13 +1,41 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
-# TEST USER CREATION
 def user_register(request):
     form = UserCreationForm()
 
     if request.method == "POST":
         form = UserCreationForm(request.POST)
-        user = form.save(commit=False)
-        print("New user username:", user)
+        if form.is_valid():
+            user = form.save(commit=False)
+            print(user)
     context = {'form': form}
     return render(request, 'users/register.html', context=context)
+
+
+def user_login(request):
+    if request.method == "POST":
+        
+        username = request.POST['username']
+        password = request.POST['password']
+
+        # Check if user with this username exists
+        try:
+            user = User.objects.get(username=username)
+        except Exception as e:
+            print(e)
+            print(f'User with username "{username}" does not exist!')
+
+        # Check if user with such credentials exists in database. If true returns User object, if false returns None.
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            # Create session in db and in cookies.
+            login(request, user)
+            return redirect('main')
+        else:
+            print('Username or password is incorrect')
+
+    return render(request, "users/login.html")
