@@ -1,0 +1,25 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<h1>HELLO WORLD!</h1>
+<br>
+<h2>Your tasks:</h2>
+<!-- Check if 'tasks' is not empty -->
+{% if tasks|length > 0 %}
+<!-- If tasks isn't empty, output all tasks -->
+{% for task in tasks %}
+<!-- Check if task is done or not -->
+{% if task.status == False %}
+<!-- Output if task is uncompleted -->
+<p>{{ task.task_name }}</p>
+{% else %}
+<!-- Output if task is completed -->
+<p style="text-decoration: line-through">{{ task.task_name }}</p>
+{% endif %}
+{% endfor %}
+<!-- If 'tasks' is empty -->
+{% else %}
+<p>You have no tasks!</p>
+{% endif %}
+
+{% endblock content %}
