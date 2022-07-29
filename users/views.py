@@ -15,7 +15,7 @@ def user_register(request):
             print('User successfully registered!')
             # Create new session
             login(request, user)
-            return redirect('main')
+            return redirect('all_tasks')
     context = {'form': form}
     return render(request, 'users/register.html', context=context)
 
@@ -39,7 +39,7 @@ def user_login(request):
         if user is not None:
             # Create session in db and in cookies.
             login(request, user)
-            return redirect('main')
+            return redirect('all_tasks')
         else:
             print('Username or password is incorrect')
 

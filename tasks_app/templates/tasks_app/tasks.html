@@ -4,23 +4,30 @@
 <!-- Check if user is authenticated -->
 {% if request.user.is_authenticated is True %}
 <h2>Your tasks:</h2>
+
 <!-- Check if 'tasks' is not empty -->
 {% if tasks|length > 0 %}
+
 <!-- If tasks isn't empty, output all tasks -->
 {% for task in tasks %}
 <!-- Check if task is done or not -->
 {% if task.status is False %}
 <!-- Output if task is uncompleted -->
 <p>{{ task.task_name }}</p>
-{% else %}
 <!-- Output if task is completed -->
+{% else %}
 <p style="text-decoration: line-through">{{ task.task_name }}</p>
 {% endif %}
 {% endfor %}
+
 <!-- If 'tasks' is empty -->
 {% else %}
 <p>You have no tasks!</p>
 {% endif %}
+
+<!-- Add new task button -->
+<p><a href="{% url 'add_task' %}"><button>Add task</button></a></p>
+
 
 <!-- If user isn't authenticated -->
 {% else %}
@@ -28,4 +35,5 @@
 <p><a href="{% url 'register' %}">Sign up</a></p>
 <p><a href="{% url 'login' %}">Sign in</a></p>
 {% endif %}
+
 {% endblock content %}
