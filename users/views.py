@@ -9,8 +9,13 @@ def user_register(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
+            # Save new user
             user = form.save(commit=False)
-            print(user)
+            user.save()
+            print('User successfully registered!')
+            # Create new session
+            login(request, user)
+            return redirect('main')
     context = {'form': form}
     return render(request, 'users/register.html', context=context)
 
