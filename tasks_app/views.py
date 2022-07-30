@@ -22,3 +22,11 @@ def add_task(request):
         Task.objects.create(task_name=task_name, owner=user)
         return redirect('all_tasks')    
     return render(request, 'tasks_app/create.html')
+
+
+@login_required(login_url='login')
+def delete_task(request, pk: int):
+    print(pk)
+    task = Task.objects.get(id=pk)
+    task.delete()
+    return redirect("all_tasks")

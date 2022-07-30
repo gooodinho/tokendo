@@ -13,7 +13,9 @@
 <!-- Check if task is done or not -->
 {% if task.status is False %}
 <!-- Output if task is uncompleted -->
-<p>{{ task.task_name }}</p>
+{{ task.task_name }}
+<span><a href="{% url 'delete_task' task.id %}"><button>Delete</button></a></span>
+<br>
 <!-- Output if task is completed -->
 {% else %}
 <p style="text-decoration: line-through">{{ task.task_name }}</p>
