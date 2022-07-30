@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -44,3 +44,8 @@ def user_login(request):
             print('Username or password is incorrect')
 
     return render(request, "users/login.html")
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('all_tasks')

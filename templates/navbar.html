@@ -1,0 +1,8 @@
+<h2>Temp navbar</h2>
+
+{% if request.user.is_authenticated %}
+<span><a href="{% url 'logout' %}">Logout</a></span>
+{% else %}
+<span><a href="{% url 'register' %}">Register</a></span>
+<span><a href="{% url 'login' %}">Login</a></span>
+{% endif %}
