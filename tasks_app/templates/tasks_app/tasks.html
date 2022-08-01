@@ -36,9 +36,7 @@
 
 <!-- If user isn't authenticated -->
 {% else %}
-<h1>Welcome to TOKENDO!</h1>
-<p><a href="{% url 'register' %}">Sign up</a></p>
-<p><a href="{% url 'login' %}">Sign in</a></p>
+<h1 class="position-absolute top-50 start-50 translate-middle">Welcome to TOKENDO!</h1>
 {% endif %}
 
 {% endblock content %}
