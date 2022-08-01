@@ -10,16 +10,20 @@
 
 <!-- If tasks isn't empty, output all tasks -->
 {% for task in tasks %}
+
+<div>
 <!-- Check if task is done or not -->
 {% if task.status is False %}
 <!-- Output if task is uncompleted -->
-{{ task.task_name }}
-<span><a href="{% url 'delete_task' task.id %}"><button>Delete</button></a></span>
-<br>
-<!-- Output if task is completed -->
+{{ task.task_name}}
 {% else %}
-<p style="text-decoration: line-through">{{ task.task_name }}</p>
+<!-- Output if task is completed -->
+<span style="text-decoration: line-through">{{ task.task_name }}</span>
 {% endif %}
+<span><a href="{% url 'update_task' task.id %}"><button>Update</button></a></span>
+<span><a href="{% url 'delete_task' task.id %}"><button>Delete</button></a></span>
+</div>
+
 {% endfor %}
 
 <!-- If 'tasks' is empty -->

@@ -1,0 +1,20 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<form action="{% url 'update_task' task.id %}" method="POST">
+    {% csrf_token %}
+    <input type="text" name="task_name" value={{ task.task_name }} />
+    <br>
+    <input type="hidden" name="status" value="off">
+    {% if task.status is False %}
+    <input type="checkbox" id="status" name="status" />
+    {% else %}
+    <input type="checkbox" id="status" name="status" checked />
+    {% endif %}
+    <label for="status">Task status</label>
+    <br>
+    <input type="submit" value="Update" />
+</form>
+
+{% endblock content%}

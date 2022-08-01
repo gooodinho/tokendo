@@ -26,7 +26,23 @@ def add_task(request):
 
 @login_required(login_url='login')
 def delete_task(request, pk: int):
-    print(pk)
     task = Task.objects.get(id=pk)
     task.delete()
     return redirect("all_tasks")
+
+
+@login_required(login_url='login')
+def update_task(request, pk: int):
+    task = Task.objects.get(id=pk)
+    if request.method == "POST":
+        task_name = request.POST["task_name"]
+        form_task_status = request.POST["status"]
+
+        task_status = True if "on" in form_task_status else False
+
+        task.task_name = task_name
+        task.status = task_status
+        task.save()
+        return redirect("all_tasks")
+    context = {'task': task}
+    return render(request, 'tasks_app/update.html', context)
