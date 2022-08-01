@@ -2,11 +2,20 @@
 
 {% block content %}
 
-<form action="{% url 'login' %}" method="POST">
+<h2 class="w-50 p-3 mx-auto text-center mt-5">Login</h2>
+
+<form action="{% url 'login' %}" method="POST" class="w-50 p-3 mt-5 mx-auto">
     {% csrf_token %}
-    <input type="text" name="username" placeholder="Username" />
-    <input type="text" name="password" placeholder="Enter password" />
-    <input type="submit" value="Login" />
+    <div class="mb-3">
+        <label for="user_login_username" class="form-label">Username:</label>
+        <input type="text" class="form-control" id="user_login_username" name="username" />
+    </div>
+    <div class="mb-3">
+        <label for="user_login_password" class="form-label">Password:</label>
+        <input type="text" class="form-control" id="user_login_password" name="password" />
+    </div>
+    <input type="submit" class="btn btn-primary" value="Login" />
+    <a href="{% url 'all_tasks' %}"><button type="button" class="btn btn-secondary">Cancel</button></a>
 </form>
 
 {% endblock content %}

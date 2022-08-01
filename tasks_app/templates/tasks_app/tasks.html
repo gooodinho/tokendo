@@ -3,35 +3,43 @@
 {% block content %}
 <!-- Check if user is authenticated -->
 {% if request.user.is_authenticated is True %}
-<h2>Your tasks:</h2>
+<h2 class="w-50 p-3 mx-auto text-center mt-5">Your tasks:</h2>
 
 <!-- Check if 'tasks' is not empty -->
 {% if tasks|length > 0 %}
 
 <!-- If tasks isn't empty, output all tasks -->
-<ul class="list-group">
+<ul class="list-group w-50 p-3 mx-auto">
 {% for task in tasks %}
-    <li class="list-group-item">
-        <!-- Check if task is done or not -->
-        {% if task.status is False %}
+    <!-- Check if task is done or not -->
+    {% if task.status is False %}
+    <li class="list-group-item bg-light mt-3 shadow-sm rounded d-flex justify-content-between">
         <!-- Output if task is uncompleted -->
-        {{ task.task_name }}
-        {% else %}
-        <!-- Output if task is completed -->
-        <span style="text-decoration: line-through">{{ task.task_name }}</span>
-        {% endif %}
-        <a href="{% url 'update_task' task.id %}"><button>Update</button></a>
-        <a href="{% url 'delete_task' task.id %}"><button>Delete</button></a>
+        <span class="d-flex align-items-center me-auto">{{ task.task_name }}</span>
+        <a href="{% url 'change_status' task.id %}"><button type="button" class="btn btn-success me-2">Done?</button></a>
+        <a href="{% url 'update_task' task.id %}"><button type="button" class="btn btn-secondary me-2">Update</button></a>
+        <a href="{% url 'delete_task' task.id %}"><button type="button" class="btn btn-secondary">Delete</button></a>
     </li>
+    {% else %}
+    <li class="list-group-item bg-secondary text-white mt-3 shadow-sm rounded d-flex justify-content-between">
+        <!-- Output if task is completed -->
+        <span class="d-flex align-items-center me-auto">{{ task.task_name }}</span>
+        <a href="{% url 'change_status' task.id %}"><button type="button" class="btn btn-warning me-2">Undo?</button></a>
+        <a href="{% url 'update_task' task.id %}"><button type="button" class="btn btn-light me-2">Update</button></a>
+        <a href="{% url 'delete_task' task.id %}"><button type="button" class="btn btn-light">Delete</button></a>
+    </li>
+    {% endif %}
 {% endfor %}
 </ul>
 <!-- If 'tasks' is empty -->
 {% else %}
-<p>You have no tasks!</p>
+<h1 class="position-absolute top-50 start-50 translate-middle">You have no tasks!</h1>
 {% endif %}
 
 <!-- Add new task button -->
-<p><a href="{% url 'add_task' %}"><button>Add task</button></a></p>
+<div class="w-50 p-3 mx-auto">
+    <a href="{% url 'add_task' %}"><button class="btn btn-primary w-100" type="button">Add task</button></a>
+</div>
 
 
 <!-- If user isn't authenticated -->

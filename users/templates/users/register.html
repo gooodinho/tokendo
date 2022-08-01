@@ -1,12 +1,13 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<h2>Registration</h2>
+<h2 class="w-50 p-3 mx-auto text-center mt-5">Registration</h2>
 
-<form method="POST" action="{% url 'register' %}">
+<form method="POST" action="{% url 'register' %}" class="w-50 p-3 mt-5 mx-auto">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Sign up">
+    <input type="submit" class="btn btn-primary" value="Sign up">
+    <a href="{% url 'all_tasks' %}"><button type="button" class="btn btn-secondary">Cancel</button></a>
 </form>
 
 {% endblock content %}

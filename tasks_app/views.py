@@ -46,3 +46,11 @@ def update_task(request, pk: int):
         return redirect("all_tasks")
     context = {'task': task}
     return render(request, 'tasks_app/update.html', context)
+
+
+@login_required(login_url='login')
+def change_task_status(request, pk: int):
+    task = Task.objects.get(id=pk)
+    task.status = not task.status
+    task.save()
+    return redirect("all_tasks")
