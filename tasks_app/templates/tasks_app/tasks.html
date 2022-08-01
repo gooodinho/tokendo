@@ -9,23 +9,22 @@
 {% if tasks|length > 0 %}
 
 <!-- If tasks isn't empty, output all tasks -->
+<ul class="list-group">
 {% for task in tasks %}
-
-<div>
-<!-- Check if task is done or not -->
-{% if task.status is False %}
-<!-- Output if task is uncompleted -->
-{{ task.task_name}}
-{% else %}
-<!-- Output if task is completed -->
-<span style="text-decoration: line-through">{{ task.task_name }}</span>
-{% endif %}
-<span><a href="{% url 'update_task' task.id %}"><button>Update</button></a></span>
-<span><a href="{% url 'delete_task' task.id %}"><button>Delete</button></a></span>
-</div>
-
+    <li class="list-group-item">
+        <!-- Check if task is done or not -->
+        {% if task.status is False %}
+        <!-- Output if task is uncompleted -->
+        {{ task.task_name }}
+        {% else %}
+        <!-- Output if task is completed -->
+        <span style="text-decoration: line-through">{{ task.task_name }}</span>
+        {% endif %}
+        <a href="{% url 'update_task' task.id %}"><button>Update</button></a>
+        <a href="{% url 'delete_task' task.id %}"><button>Delete</button></a>
+    </li>
 {% endfor %}
-
+</ul>
 <!-- If 'tasks' is empty -->
 {% else %}
 <p>You have no tasks!</p>
