@@ -1,51 +1,34 @@
+from typing import Union
+
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 
-def user_register(request):
-    form = UserCreationForm()
+from .service import *
 
+
+def user_registration_view(request) -> Union[HttpResponseRedirect, HttpResponse]:
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            # Save new user
-            user = form.save(commit=False)
-            user.save()
-            print('User successfully registered!')
-            # Create new session
-            login(request, user)
-            return redirect('all_tasks')
-    context = {'form': form}
-    return render(request, 'users/register.html', context=context)
+        register_new_user_request_handler(request)
+        return redirect('all_tasks')
+    return render(request, 'users/register.html', {'form': UserCreationForm()})
 
 
-def user_login(request):
+def user_login_view(request) -> Union[HttpResponse, HttpResponseRedirect]:
     if request.method == "POST":
-        
         username = request.POST['username']
-        password = request.POST['password']
-
-        # Check if user with this username exists
-        try:
-            user = User.objects.get(username=username)
-        except Exception as e:
-            print(e)
-            print(f'User with username "{username}" does not exist!')
-
-        # Check if user with such credentials exists in database. If true returns User object, if false returns None.
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            # Create session in db and in cookies.
-            login(request, user)
-            return redirect('all_tasks')
-        else:
-            print('Username or password is incorrect')
-
+        if check_user_with_username_exists(username):
+            # Check if user with such credentials exists in database. If true returns User object, if false returns None.
+            user = authenticate(request, username=username, password=request.POST['password'])
+            if user is not None:
+                login(request, user) # Create session in db and in cookies.
+                return redirect('all_tasks')
+            else:
+                print('Password is incorrect')
     return render(request, "users/login.html")
 
 
-def user_logout(request):
+def user_logout_view(request) -> HttpResponseRedirect:
     logout(request)
     return redirect('all_tasks')
