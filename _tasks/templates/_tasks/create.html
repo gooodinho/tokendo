@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form action="{% url 'add_task' %}" method="POST" class="w-50 p-3 mt-5 mx-auto">
+<form action="{% url 'create_task' %}" method="POST" class="w-50 p-3 mt-5 mx-auto">
     {% csrf_token %}
     <div class="mb-3">
         <label for="task_name" class="form-label">Task:</label>
