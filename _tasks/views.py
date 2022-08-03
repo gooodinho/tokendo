@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from .crud import *
+from .service import *
 
 
 def output_all_user_tasks_view(request) -> HttpResponse:
