@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 
 from .service import *
 
@@ -29,6 +30,13 @@ def user_login_view(request) -> Union[HttpResponse, HttpResponseRedirect]:
     return render(request, "users/login.html")
 
 
+@login_required(login_url='login')
 def user_logout_view(request) -> HttpResponseRedirect:
     logout(request)
     return redirect('all_tasks')
+
+
+@login_required(login_url='login')
+def user_profile_view(request) -> HttpResponse:
+    profile = get_profile_by_user(request.user)
+    return render(request, "users/profile.html", {'profile': profile})

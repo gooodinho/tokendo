@@ -1,0 +1,20 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="card mb-3 mt-5 mx-auto" style="max-width: 540px;">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="{% static profile.profile_image.url %}" class="img-fluid rounded-start" alt="Profile image">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">{{ profile.username }}</h5>
+                <p class="card-text">Name: {% if profile.name is None%} NOOOO {% else %}KEK{% endif %}</p>
+                <p class="card-text"><small class="text-muted">{{ profile.email }}</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

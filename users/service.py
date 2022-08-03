@@ -1,3 +1,5 @@
+from typing import Union
+
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login
@@ -44,4 +46,12 @@ def update_profile(user: User, username: str, name: str = None, email: str = Non
     profile.name = name
     profile.email = email
     profile.save()
+    return profile
+
+
+def get_profile_by_user(user: User) -> Union[Profile, None]:
+    try:
+        profile = Profile.objects.get(user=user)
+    except Profile.DoesNotExist:
+        return None
     return profile
