@@ -2,6 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 
+from .models import Profile
 
 
 def register_new_user_request_handler(request) -> None:
@@ -24,3 +25,23 @@ def check_user_with_username_exists(username: str) -> bool:
     except Exception as e:
         print(f'User with username "{username}" does not exist!')
         return False
+
+
+def create_profile(user: User, username: str, name: str = None, email: str = None) -> Profile:
+    profile = Profile.objects.create(
+        user=user,
+        name=name,
+        username=username,
+        email=email
+    )
+    profile.save()
+    return profile
+
+
+def update_profile(user: User, username: str, name: str = None, email: str = None) -> Profile:
+    profile = Profile.objects.get(user=user)
+    profile.username = username
+    profile.name = name
+    profile.email = email
+    profile.save()
+    return profile
