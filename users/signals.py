@@ -1,4 +1,4 @@
-from .service import create_profile, get_profile_by_user, update_profile
+from .service import create_profile, update_user
 
 
 def create_user_profile_signal(sender, instance, created, **kwargs) -> None:
@@ -7,10 +7,7 @@ def create_user_profile_signal(sender, instance, created, **kwargs) -> None:
         create_profile(user, user.username)
 
 
-def update_user_profile_signal(sender, instance, created, **kwargs) -> None:
+def update_profile_user_signal(sender, instance, created, **kwargs) -> None:
     if created is not True:
-        user = instance
-        if get_profile_by_user(user) is not None:
-            update_profile(user, user.username, user.first_name, user.email)
-        else:
-            create_profile(user, user.username)
+        profile = instance
+        update_user(profile.user, profile.username, profile.name, profile.email)

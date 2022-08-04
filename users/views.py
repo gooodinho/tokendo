@@ -7,6 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 from .service import *
+from .forms import ProfileForm
 
 
 def user_registration_view(request) -> Union[HttpResponseRedirect, HttpResponse]:
@@ -38,5 +39,18 @@ def user_logout_view(request) -> HttpResponseRedirect:
 
 @login_required(login_url='login')
 def user_profile_view(request) -> HttpResponse:
-    profile = get_profile_by_user(request.user)
+    profile = request.user.profile
     return render(request, "users/profile.html", {'profile': profile})
+
+
+@login_required(login_url='login')
+def user_profile_edit_view(request) -> Union[HttpResponse, HttpResponseRedirect]:
+    profile = request.user.profile
+    form = ProfileForm(instance=profile)
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            profile = form.save()
+            return redirect('profile')
+    context = {'profile': profile, 'form': form}
+    return render(request, "users/profile_edit.html", context)

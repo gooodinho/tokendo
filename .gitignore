@@ -141,3 +141,5 @@ db_diagram.drawio
 
 # Staticfiles
 /staticfiles
+*.jpg
+*.png

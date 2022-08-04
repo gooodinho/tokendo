@@ -1,3 +1,4 @@
+from tkinter.messagebox import NO
 from typing import Union
 
 from django.contrib.auth.forms import UserCreationForm
@@ -40,18 +41,17 @@ def create_profile(user: User, username: str, name: str = None, email: str = Non
     return profile
 
 
-def update_profile(user: User, username: str, name: str = None, email: str = None) -> Profile:
-    profile = Profile.objects.get(user=user)
+def update_profile(profile: Profile, username: str, name: str, email: str, profile_image) -> Profile:
     profile.username = username
     profile.name = name
     profile.email = email
+    profile.profile_image = profile_image
     profile.save()
     return profile
 
-
-def get_profile_by_user(user: User) -> Union[Profile, None]:
-    try:
-        profile = Profile.objects.get(user=user)
-    except Profile.DoesNotExist:
-        return None
-    return profile
+def update_user(user: User, username: str, name: str, email: str) -> User:
+    user.username = username
+    user.first_name = name
+    user.email = email
+    user.save()
+    return user
