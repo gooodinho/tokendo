@@ -33,7 +33,7 @@ def update_task_view(request, pk: int) -> Union[HttpResponseRedirect, HttpRespon
                     request.POST["task_name"], 
                     True if "on" in request.POST["status"] else False)
         return redirect("all_tasks")
-    return render(request, '_tasks/update.html', {'task': get_task_by_id(id)})
+    return render(request, '_tasks/update.html', {'task': get_task_by_id(pk)})
 
 
 @login_required(login_url='login')
