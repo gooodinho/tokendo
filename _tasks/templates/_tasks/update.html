@@ -5,16 +5,10 @@
 <form action="{% url 'update_task' task.id %}" method="POST" class="w-50 p-3 mt-5 mx-auto">
     {% csrf_token %}
     <div class="mb-3">
-        <input type="text" class="form-control" name="task_name" value={{ task.task_name }} />
-        <input type="hidden" name="status" value="off">
-    </div>
-    <div class="form-check mb-3">
-        {% if task.status is False %}
-        <input type="checkbox" class="form-check-input" id="status" name="status" />
-        {% else %}
-        <input type="checkbox" class="form-check-input" id="status" name="status" checked />
-        {% endif %}
-        <label class="form-check-label" for="status">Task status</label>
+        {% for field in form %}
+            {{ field.label_tag }}
+            {{ field }}
+        {% endfor %}
     </div>
     <input type="submit" class="btn btn-primary" value="Update" />
     <a href="{% url 'all_tasks' %}"><button type="button" class="btn btn-secondary">Cancel</button></a>
