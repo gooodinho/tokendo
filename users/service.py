@@ -1,24 +1,19 @@
-from tkinter.messagebox import NO
-from typing import Union
-
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 
 from .models import Profile
+from .forms import CustomUserCreationForm
 
 
 def register_new_user_request_handler(request) -> None:
-    form = UserCreationForm(request.POST)
+    form = CustomUserCreationForm(request.POST)
     if form.is_valid():
         user = register_new_user(form)
         # Create new session
         login(request, user)
 
-def register_new_user(form: UserCreationForm) -> User:
-    user = form.save(commit=False)
-    user.save()
-    return user
+def register_new_user(form: CustomUserCreationForm) -> User:
+    return form.save()
 
 
 def check_user_with_username_exists(username: str) -> bool:
@@ -30,7 +25,7 @@ def check_user_with_username_exists(username: str) -> bool:
         return False
 
 
-def create_profile(user: User, username: str, name: str = None, email: str = None) -> Profile:
+def create_profile(user: User, username: str, email: str, name: str = None) -> Profile:
     profile = Profile.objects.create(
         user=user,
         name=name,
@@ -49,9 +44,8 @@ def update_profile(profile: Profile, username: str, name: str, email: str, profi
     profile.save()
     return profile
 
-def update_user(user: User, username: str, name: str, email: str) -> User:
+def update_user(user: User, username: str, email: str) -> User:
     user.username = username
-    user.first_name = name
     user.email = email
     user.save()
     return user

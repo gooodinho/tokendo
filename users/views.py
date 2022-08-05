@@ -3,7 +3,6 @@ from typing import Union
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 from .service import *
@@ -14,7 +13,7 @@ def user_registration_view(request) -> Union[HttpResponseRedirect, HttpResponse]
     if request.method == "POST":
         register_new_user_request_handler(request)
         return redirect('all_tasks')
-    return render(request, 'users/register.html', {'form': UserCreationForm()})
+    return render(request, 'users/register.html', {'form': CustomUserCreationForm()})
 
 
 def user_login_view(request) -> Union[HttpResponse, HttpResponseRedirect]:

@@ -10,7 +10,7 @@
         </div>
         <div class="col-md-5 d-flex align-items-center">
             <div class="card-body text-center">
-                <h5 class="card-title fs-1">{{ profile.username }}</h5>
+                <h5 class="card-title fs-1">Username: {{ profile.username }}</h5>
                 <p class="card-text fs-2">Name: {% if profile.name|length == 0 %}---{% else %}{{ profile.name }}{% endif %}</p>
                 <p class="card-text fs-2">Email: {% if profile.email|length == 0 %}---{% else %}{{ profile.email }}{% endif %}</p>
                 <a href="{% url 'edit_profile' %}"><button type="button" class="btn btn-secondary fs-4">Edit</button></a>
