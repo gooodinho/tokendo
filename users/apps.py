@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 
 
 class UsersConfig(AppConfig):
@@ -22,4 +22,10 @@ class UsersConfig(AppConfig):
             receiver=signals.update_profile_user_signal, 
             sender=Profile, 
             dispatch_uid="update_profile_user_signal_id"
+        )
+
+        pre_save.connect(
+            receiver=signals.delete_old_profile_image_signal,
+            sender=Profile,
+            dispatch_uid="delete_old_profile_image_signal_id"
         )

@@ -20,8 +20,16 @@ def check_user_with_username_exists(username: str) -> bool:
     try:
         User.objects.get(username=username)
         return True
-    except Exception as e:
+    except User.DoesNotExist:
         print(f'User with username "{username}" does not exist!')
+        return False
+
+
+def check_profile_with_id_exists(id: int) -> bool:
+    try:
+        Profile.objects.get(id=id)
+        return True
+    except Profile.DoesNotExist:
         return False
 
 
@@ -49,3 +57,7 @@ def update_user(user: User, username: str, email: str) -> User:
     user.email = email
     user.save()
     return user
+
+def get_profile_image(id: int):
+    image = Profile.objects.get(id=id).profile_image
+    return image
