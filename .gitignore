@@ -143,4 +143,5 @@ db_diagram.drawio
 /staticfiles
 *.jpg
 *.png
+!s_*.png
 *.jpeg

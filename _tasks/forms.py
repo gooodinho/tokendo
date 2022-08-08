@@ -10,7 +10,7 @@ class TaskForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ModelForm, self).__init__(*args, **kwargs)
-
+        self.fields['task_name'].widget.attrs.update({'autofocus': True})
         for name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
 

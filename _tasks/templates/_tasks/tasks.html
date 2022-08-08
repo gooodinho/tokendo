@@ -1,5 +1,7 @@
 {% extends 'main.html' %}
 
+{% load static %}
+
 {% block content %}
 <!-- Check if user is authenticated -->
 {% if request.user.is_authenticated is True %}
@@ -12,23 +14,18 @@
 <ul class="list-group w-50 p-3 mx-auto">
 {% for task in tasks %}
     <!-- Check if task is done or not -->
-    {% if task.status is False %}
     <li class="list-group-item bg-light mt-3 shadow-sm rounded d-flex justify-content-between">
         <!-- Output if task is uncompleted -->
+        {% if task.status is False %}
+        <a href="{% url 'change_status' task.id %}"><img src="{% static 'images/s_task-circle.png' %}" alt="Task icon" style="width: 30px; height: 30px" class="me-2"></a>
         <span class="d-flex align-items-center me-auto">{{ task.task_name }}</span>
-        <a href="{% url 'change_status' task.id %}"><button type="button" class="btn btn-success me-2">Done?</button></a>
-        <a href="{% url 'update_task' task.id %}"><button type="button" class="btn btn-secondary me-2">Update</button></a>
-        <a href="{% url 'delete_task' task.id %}"><button type="button" class="btn btn-secondary">Delete</button></a>
+        {% else %}
+        <a href="{% url 'change_status' task.id %}"><img src="{% static 'images/s_task-done-circle.png' %}" alt="Done task icon" style="width: 30px; height: 30px" class="me-2"></a>
+        <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through">{{ task.task_name }}</span>
+        {% endif %}
+        <a href="{% url 'update_task' task.id %}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
+        <a href="{% url 'delete_task' task.id %}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        
     </li>
-    {% else %}
-    <li class="list-group-item bg-secondary text-white mt-3 shadow-sm rounded d-flex justify-content-between">
-        <!-- Output if task is completed -->
-        <span class="d-flex align-items-center me-auto">{{ task.task_name }}</span>
-        <a href="{% url 'change_status' task.id %}"><button type="button" class="btn btn-warning me-2">Undo?</button></a>
-        <a href="{% url 'update_task' task.id %}"><button type="button" class="btn btn-light me-2">Update</button></a>
-        <a href="{% url 'delete_task' task.id %}"><button type="button" class="btn btn-light">Delete</button></a>
-    </li>
-    {% endif %}
 {% endfor %}
 </ul>
 <!-- If 'tasks' is empty -->

@@ -4,7 +4,9 @@
     <div class="container-fluid">
         <a href="{% url 'all_tasks' %}" class="me-auto navbar-brand">TOKENDO</a>
         {% if request.user.is_authenticated %}
-        <a href="{% url 'profile' %}"><img src="{% static request.user.profile.profile_image.url %}" class="rounded-circle me-2" alt="profile logo" style="width: 40px; height: 40px"></a>
+        <a href="{% url 'profile' %}">
+            <div class="me-2" id="avatar" style="background-image: url('{% static request.user.profile.profile_image.url %}');"></div>
+        </a>
         <a href="{% url 'profile' %}"><button type="button" class="btn btn-outline-success me-2">Profile</button></a>
         <a href="{% url 'logout' %}"><button type="button" class="btn btn-outline-success">Logout</button></a>
         {% else %}

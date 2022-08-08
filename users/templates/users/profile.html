@@ -8,7 +8,7 @@
         <div class="col-md-5">
             <img src="{% static profile.profile_image.url %}" class="img-fluid rounded-start" alt="Profile image" style="width: 100%; height: 100%">
         </div>
-        <div class="col-md-5 d-flex align-items-center">
+        <div class="col-md-7 d-flex">
             <div class="card-body text-center">
                 <h5 class="card-title fs-1">Username: {{ profile.username }}</h5>
                 <p class="card-text fs-2">Name: {% if profile.name|length == 0 %}---{% else %}{{ profile.name }}{% endif %}</p>
