@@ -8,12 +8,9 @@ from .forms import CustomUserCreationForm
 def register_new_user_request_handler(request) -> None:
     form = CustomUserCreationForm(request.POST)
     if form.is_valid():
-        user = register_new_user(form)
+        user = form.save()
         # Create new session
         login(request, user)
-
-def register_new_user(form: CustomUserCreationForm) -> User:
-    return form.save()
 
 
 def check_user_with_username_exists(username: str) -> bool:
