@@ -8,7 +8,7 @@ from .service import *
 from .forms import TaskForm, TaskEditForm
 
 def output_all_user_tasks_view(request) -> HttpResponse:
-    projects = get_all_profile_projects(request.user)
+    projects = get_all_user_projects(request.user)
     tasks = get_all_user_tasks(request.user)
     return render(request, '_tasks/tasks.html', {'projects': projects,'tasks': tasks})
 

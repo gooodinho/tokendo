@@ -13,6 +13,9 @@ class Project(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return self.title
+
 
 class Task(models.Model):
     task_name = models.CharField('Task name', max_length=1000)
