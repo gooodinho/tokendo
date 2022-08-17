@@ -1,13 +1,11 @@
 from .service import create_profile, update_user, get_profile_image, check_profile_with_id_exists
-from _tasks.service import create_inbox_project
 
 
 def create_user_profile_signal(sender, instance, created, **kwargs) -> None:
     """Signal for automatic Profile object creation for User, after registration."""
     if created is True:
         user = instance
-        profile = create_profile(user, user.username, user.email)
-        create_inbox_project(profile)
+        create_profile(user, user.username, user.email)
 
 
 def update_profile_user_signal(sender, instance, created, **kwargs) -> None:

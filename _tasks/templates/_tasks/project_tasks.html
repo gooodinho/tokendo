@@ -3,13 +3,16 @@
 {% load static %}
 
 {% block content %}
-<!-- Check if user is authenticated -->
 {% if request.user.is_authenticated is True %}
 <div class="d-flex">
     <div class="list-group">
-        <a href="{% url 'all_tasks' %}" class="list-group-item list-group-item-action active" aria-current="true">Inbox</a>
+        <a href="{% url 'all_tasks' %}" class="list-group-item list-group-item-action">Inbox</a>
         {% for project in projects %}
-        <a href="{% url 'project_tasks' project.id %}" class="list-group-item list-group-item-action">{{ project.title }}</a>
+            {% if project.id == project_id %}
+            <a href="{% url 'project_tasks' project.id %}" class="list-group-item list-group-item-action active" aria-current="true">{{ project.title }}</a>
+            {% else %}
+            <a href="{% url 'project_tasks' project.id %}" class="list-group-item list-group-item-action">{{ project.title }}</a>
+            {% endif %}
         {% endfor %}
     </div>
     <div class="flex-fill">
@@ -25,14 +28,14 @@
             <li class="list-group-item bg-light mt-3 shadow-sm rounded d-flex justify-content-between">
                 <!-- Output if task is uncompleted -->
                 {% if task.status is False %}
-                <a href="{% url 'change_status' task.id %}"><img src="{% static 'images/s_task-circle.png' %}" alt="Task icon" style="width: 30px; height: 30px" class="me-2"></a>
+                <a href="{% url 'project_change_status' project_id task.id %}"><img src="{% static 'images/s_task-circle.png' %}" alt="Task icon" style="width: 30px; height: 30px" class="me-2"></a>
                 <span class="d-flex align-items-center me-auto">{{ task.task_name }}</span>
                 {% else %}
-                <a href="{% url 'change_status' task.id %}"><img src="{% static 'images/s_task-done-circle.png' %}" alt="Done task icon" style="width: 30px; height: 30px" class="me-2"></a>
+                <a href="{% url 'project_change_status' project_id task.id %}"><img src="{% static 'images/s_task-done-circle.png' %}" alt="Done task icon" style="width: 30px; height: 30px" class="me-2"></a>
                 <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through">{{ task.task_name }}</span>
                 {% endif %}
-                <a href="{% url 'update_task' task.id %}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
-                <a href="{% url 'delete_task' task.id %}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        
+                <a href="{% url 'project_update_task' project_id task.id %}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
+                <a href="{% url 'project_delete_task' project_id task.id %}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        
             </li>
         {% endfor %}
         </ul>
@@ -43,7 +46,7 @@
 
         <!-- Add new task creation button -->
         <div class="w-50 p-3 mx-auto">
-            <a href="{% url 'create_task' %}"><button class="btn btn-primary w-100" type="button">Add task</button></a>
+            <a href="{% url 'project_create_task' project_id %}"><button class="btn btn-primary w-100" type="button">Add task</button></a>
         </div>
 
     </div>

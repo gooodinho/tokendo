@@ -1,7 +1,6 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, ModelChoiceField
 
-from .models import Task
-
+from .models import Task, Project
 
 class TaskForm(ModelForm):
     class Meta:
@@ -18,9 +17,11 @@ class TaskForm(ModelForm):
 class TaskEditForm(ModelForm):
     class Meta:
         model = Task
-        fields = ['task_name', 'status']
+        fields = ['task_name', 'status', 'project']
 
-    def __init__(self, *args, **kwargs):
+
+    def __init__(self, profile, *args, **kwargs):
         super(ModelForm, self).__init__(*args, **kwargs)
         self.fields['task_name'].widget.attrs.update({'class': 'form-control'})
         self.fields['status'].widget.attrs.update({'class': 'form-check-input'})
+        self.fields['project'].queryset = Project.objects.filter(owner=profile)
