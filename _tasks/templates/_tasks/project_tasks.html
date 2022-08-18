@@ -14,7 +14,7 @@
             <a href="{% url 'project_tasks' project.id %}" class="list-group-item list-group-item-action">{{ project.title }}</a>
             {% endif %}
         {% endfor %}
-        <a href="#" class="list-group-item list-group-item-action"><img src="{% static 'images/plus.svg' %}" alt="Create project" style="width: 30px; height: 30px"/></a>
+        <a href="{% url 'project_create_project' project_id %}" class="list-group-item list-group-item-action"><img src="{% static 'images/plus.svg' %}" alt="Create project" style="width: 30px; height: 30px"/></a>
 
     </div>
     <div class="flex-fill">

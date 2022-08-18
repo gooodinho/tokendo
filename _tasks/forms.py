@@ -25,3 +25,9 @@ class TaskEditForm(ModelForm):
         self.fields['task_name'].widget.attrs.update({'class': 'form-control'})
         self.fields['status'].widget.attrs.update({'class': 'form-check-input'})
         self.fields['project'].queryset = Project.objects.filter(owner=profile)
+
+
+class ProjectForm(ModelForm):
+    class Meta:
+        model = Project
+        fields = ['title']

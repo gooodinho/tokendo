@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from .service import *
-from .forms import TaskForm, TaskEditForm
+from .forms import *
 
 
 @login_required(login_url='login')
@@ -26,7 +26,6 @@ def output_inbox_or_project_tasks_view(request, project_id: UUID = None) -> Unio
 @login_required(login_url='login')
 def create_task_view(request, project_id: UUID = None) -> Union[HttpResponseRedirect, HttpResponse]:
     form = TaskForm()
-    print(f'Project id: {project_id}')
     if request.method == "POST":
         form = TaskForm(request.POST)
         if form.is_valid():
@@ -35,7 +34,6 @@ def create_task_view(request, project_id: UUID = None) -> Union[HttpResponseRedi
             task.owner = profile
             if project_id is not None:
                 task.project = get_project_by_id(project_id)
-                print(task.project)
                 task.save()
                 return redirect("project_tasks", project_id=project_id)
             else:
@@ -76,3 +74,17 @@ def change_task_status_view(request, pk: UUID, project_id: UUID = None) -> HttpR
         return redirect("project_tasks", project_id=project_id)
     else:
         return redirect("all_tasks")
+
+
+@login_required(login_url='login')
+def create_project_view(request, project_id: UUID = None):
+    form = ProjectForm()
+    if request.method == "POST":
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            profile = request.user.profile
+            project = form.save(commit=False)
+            project.owner = profile
+            project.save()
+            return redirect("project_tasks", project_id=project.id)
+    return render(request, '_tasks/create_project.html', {"form": form, "project_id": project_id})

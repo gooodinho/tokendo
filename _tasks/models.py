@@ -9,7 +9,6 @@ from users.models import Profile
 class Project(models.Model):
     title = models.CharField('Project title', max_length=300)
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    is_deletable = models.BooleanField('Can be deleted?', default=True, blank=True, editable=False)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(default=timezone.now)
 
