@@ -26,3 +26,6 @@ class Task(models.Model):
 
     def __str__(self):
         return self.task_name
+
+    class Meta:
+        ordering = ['status']
