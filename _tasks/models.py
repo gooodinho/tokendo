@@ -29,3 +29,19 @@ class Task(models.Model):
 
     class Meta:
         ordering = ['status']
+
+
+
+class SubTask(models.Model):
+    task_name = models.CharField('Subtask name', max_length=1000)
+    status = models.BooleanField('Subtask status', default=False, blank=True)
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.task_name
+
+    class Meta:
+        ordering = ['status']

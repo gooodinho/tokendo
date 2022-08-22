@@ -1,0 +1,14 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<h1>Task name: {{ task.task_name }}</h1>
+back button
+progress bar if there are sub tasks 
+all sub tasks with edit/delete buttons
+back button
+{% if subtasks|length > 0%}
+{% for subtask in subtasks %}
+<p>{{ subtask }}</p>
+{% endfor %}
+{% endif %}
+{% endblock content %}

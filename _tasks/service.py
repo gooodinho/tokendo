@@ -4,7 +4,7 @@ from uuid import UUID
 from django.contrib.auth.models import User
 from django.db.models.query import QuerySet
 
-from .models import Task, Project
+from .models import Task, Project, SubTask
 from users.models import Profile
 
 
@@ -14,6 +14,10 @@ def get_all_user_tasks(user: User) -> Union[list, QuerySet]:
     if user.is_authenticated:
         tasks = user.profile.task_set.all()
     return tasks
+
+
+def get_all_subtasks(task: Task):
+    return SubTask.objects.filter(task=task)
 
 
 def get_user_inbox_tasks(user: User):

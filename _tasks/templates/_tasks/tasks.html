@@ -27,10 +27,10 @@
                 <!-- Output if task is uncompleted -->
                 {% if task.status is False %}
                 <a href="{% url 'change_status' task.id %}"><img src="{% static 'images/s_task-circle.png' %}" alt="Task icon" style="width: 30px; height: 30px" class="me-2"></a>
-                <span class="d-flex align-items-center me-auto">{{ task.task_name }}</span>
+                <span class="d-flex align-items-center me-auto"><a href="{% url 'inbox_task_info' task.id %}">{{ task.task_name }}</a></span>
                 {% else %}
                 <a href="{% url 'change_status' task.id %}"><img src="{% static 'images/s_task-done-circle.png' %}" alt="Done task icon" style="width: 30px; height: 30px" class="me-2"></a>
-                <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through">{{ task.task_name }}</span>
+                <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through"><a href="{% url 'inbox_task_info' task.id %}">{{ task.task_name }}</a></span>
                 {% endif %}
                 <a href="{% url 'update_task' task.id %}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
                 <a href="{% url 'delete_task' task.id %}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        

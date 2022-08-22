@@ -88,3 +88,10 @@ def create_project_view(request, project_id: UUID = None):
             project.save()
             return redirect("project_tasks", project_id=project.id)
     return render(request, '_tasks/create_project.html', {"form": form, "project_id": project_id})
+
+
+@login_required(login_url='login')
+def task_info_view(request, task_id: UUID, project_id: UUID = None):
+    task = get_task_by_id(task_id)
+    subtasks = get_all_subtasks(task)
+    return render(request, '_tasks/task_page.html', {'task': task, 'subtasks': subtasks})
