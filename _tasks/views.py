@@ -15,11 +15,21 @@ def output_inbox_or_project_tasks_view(request, project_id: UUID = None) -> Unio
     if project_id is not None:
         project = get_object_or_404(Project, id=project_id)
         tasks = get_project_tasks(project)
-        context['tasks'], context['project_id'] = tasks, project_id
+        done_tasks_count = tasks.filter(status=True).count()
+        try:
+            progress = done_tasks_count/tasks.count()*100
+        except ZeroDivisionError: 
+            progress = 0
+        context['tasks'], context['project_id'], context['done_tasks_count'], context['progress'] = tasks, project_id, done_tasks_count, progress
         return render(request, '_tasks/project_tasks.html', context)
     else:
         tasks = get_user_inbox_tasks(request.user)
-        context['tasks'] = tasks
+        done_tasks_count = tasks.filter(status=True).count()
+        try:
+            progress = done_tasks_count/tasks.count()*100
+        except ZeroDivisionError: 
+            progress = 0
+        context['tasks'], context['done_tasks_count'], context['progress'] = tasks, done_tasks_count, progress
         return render(request, '_tasks/tasks.html', context)
 
 
@@ -94,4 +104,60 @@ def create_project_view(request, project_id: UUID = None):
 def task_info_view(request, task_id: UUID, project_id: UUID = None):
     task = get_task_by_id(task_id)
     subtasks = get_all_subtasks(task)
-    return render(request, '_tasks/task_page.html', {'task': task, 'subtasks': subtasks})
+    done_subtasks = subtasks.filter(status=True).count()
+    try:
+        progress = done_subtasks/subtasks.count()*100
+    except ZeroDivisionError: 
+        progress = 0
+    return render(request, '_tasks/task_page.html', {'task': task, 'subtasks': subtasks, "project_id": project_id, 'done_subtasks_count': done_subtasks, 'progress': progress})
+
+
+@login_required(login_url='login')
+def create_subtask_view(request, task_id: UUID, project_id: UUID = None):
+    form = SubTaskForm()
+    if request.method == "POST":
+        form = SubTaskForm(request.POST)
+        if form.is_valid():
+            subtask = form.save(commit=False)
+            subtask.owner = request.user.profile
+            subtask.task = get_task_by_id(task_id)
+            subtask.save()
+            if project_id:
+                return redirect("project_task_info", project_id=project_id, task_id=task_id)
+            else:
+                return redirect('inbox_task_info', task_id=task_id)    
+    return render(request, '_tasks/create_subtask.html', {"form": form, 'task_id': task_id, 'project_id': project_id})
+
+
+@login_required(login_url='login')
+def change_subtask_status_view(request, pk: UUID, project_id: UUID = None):
+    subtask = change_subtask_status(pk)
+    if project_id is not None:
+        return redirect("project_task_info", project_id=project_id, task_id=subtask.task.id)
+    else:
+        return redirect("inbox_task_info", task_id=subtask.task.id)
+
+
+@login_required(login_url='login')
+def delete_subtask_view(request, pk: UUID, project_id: UUID = None):
+    subtask = get_subtask_by_id(pk)
+    delete_subtask(pk)
+    if project_id is not None:
+        return redirect("project_task_info", project_id=project_id, task_id=subtask.task.id)
+    else:
+        return redirect("inbox_task_info", task_id=subtask.task.id)
+
+
+@login_required(login_url='login')
+def update_subtask_view(request, pk: UUID, project_id: UUID = None):
+    subtask = get_subtask_by_id(pk)
+    form = SubTaskEditForm(request.user.profile, instance=subtask)
+    if request.method == "POST":
+        form = SubTaskEditForm(request.user.profile, request.POST, instance=subtask)
+        if form.is_valid():
+            form.save()
+            if project_id is not None:
+                return redirect("project_task_info", project_id=project_id, task_id=subtask.task.id)
+            else:
+                return redirect("inbox_task_info", task_id=subtask.task.id)
+    return render(request, '_tasks/update_subtask.html', {'subtask': subtask, 'form': form, 'project_id': project_id})

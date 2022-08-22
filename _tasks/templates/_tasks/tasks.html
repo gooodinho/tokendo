@@ -18,7 +18,10 @@
 
         <!-- Check if 'tasks' is not empty -->
         {% if tasks|length > 0 %}
-
+        <h4 class="w-50 mx-auto text-center mt-1">{{ done_tasks_count }}/{{ tasks|length }}</h4>
+        <div class="progress w-50 mx-auto" style="height: 10px;">
+            <div class="progress-bar" role="progressbar" aria-label="Example 20px high" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
         <!-- If tasks isn't empty, output all tasks -->
         <ul class="list-group w-50 p-3 mx-auto">
         {% for task in tasks %}

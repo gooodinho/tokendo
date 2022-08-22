@@ -45,6 +45,10 @@ def get_task_by_id(id: UUID) -> Task:
     return Task.objects.get(id=id)
 
 
+def get_subtask_by_id(id: UUID):
+    return SubTask.objects.get(id=id)
+
+
 def get_project_by_id(id: UUID):
     return Project.objects.get(id=id)
 
@@ -54,8 +58,19 @@ def delete_task(id: UUID) -> None:
     get_task_by_id(id=id).delete()
 
 
+def delete_subtask(id: UUID):
+    get_subtask_by_id(id).delete()
+
+
 def change_task_status(id: UUID) -> None:
     """Change task's status to the opposite"""
     task = get_task_by_id(id=id)
     task.status = not task.status
     task.save()
+
+
+def change_subtask_status(id: UUID):
+    subtask = get_subtask_by_id(id=id)
+    subtask.status = not subtask.status
+    subtask.save()
+    return subtask
