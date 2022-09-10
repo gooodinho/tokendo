@@ -7,7 +7,7 @@
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit" class="btn btn-primary" value="Sign up">
-    <a href="{% url 'all_tasks' %}"><button type="button" class="btn btn-secondary">Cancel</button></a>
+    <a href="{% url 'inbox' %}"><button type="button" class="btn btn-secondary">Cancel</button></a>
 </form>
 
 {% endblock content %}

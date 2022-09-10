@@ -3,58 +3,80 @@
 {% load static %}
 
 {% block content %}
-<!-- Check if user is authenticated -->
-{% if request.user.is_authenticated is True %}
+{% if request.user.is_authenticated is True %} <!-- Check if user is authenticated -->
 <div class="d-flex">
     <div class="list-group mt-5 mx-1 text-center">
-        <a href="{% url 'all_tasks' %}" class="list-group-item list-group-item-action active" aria-current="true">Inbox</a>
+        {% if not project_id %}
+            <a href="{% url 'inbox' %}" class="list-group-item list-group-item-action active" aria-current="true">Inbox</a>
+        {% else %}
+            <a href="{% url 'inbox' %}" class="list-group-item list-group-item-action">Inbox</a>
+        {% endif %}
         {% for project in projects %}
-        <a href="{% url 'project_tasks' project.id %}" class="list-group-item list-group-item-action">{{ project.title }}</a>
+            {% if project.id == project_id %}
+                <a href="{% url 'project_tasks' project.id %}" class="list-group-item list-group-item-action active" aria-current="true">{{ project.title }}</a>
+            {% else %}
+                <a href="{% url 'project_tasks' project.id %}" class="list-group-item list-group-item-action">{{ project.title }}</a>
+            {% endif %}
         {% endfor %}
         <a href="{% url 'create_project' %}" class="list-group-item list-group-item-action"><img src="{% static 'images/plus.svg' %}" alt="Create project" style="width: 30px; height: 30px"/></a>
     </div>
     <div class="flex-fill">
         <h2 class="w-50 p-3 mx-auto text-center mt-5">Your tasks:</h2>
-
-        <!-- Check if 'tasks' is not empty -->
-        {% if tasks|length > 0 %}
-        <h4 class="w-50 mx-auto text-center mt-1">{{ done_tasks_count }}/{{ tasks|length }}</h4>
-        <div class="progress w-50 mx-auto" style="height: 10px;">
-            <div class="progress-bar" role="progressbar" aria-label="Example 20px high" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-        <!-- If tasks isn't empty, output all tasks -->
-        <ul class="list-group w-50 p-3 mx-auto">
-        {% for task in tasks %}
-            <!-- Check if task is done or not -->
-            <li class="list-group-item bg-light mt-3 shadow-sm rounded d-flex justify-content-between">
-                <!-- Output if task is uncompleted -->
-                {% if task.status is False %}
-                <a href="{% url 'change_status' task.id %}"><img src="{% static 'images/s_task-circle.png' %}" alt="Task icon" style="width: 30px; height: 30px" class="me-2"></a>
-                <span class="d-flex align-items-center me-auto"><a href="{% url 'inbox_task_info' task.id %}">{{ task.task_name }}</a></span>
-                {% else %}
-                <a href="{% url 'change_status' task.id %}"><img src="{% static 'images/s_task-done-circle.png' %}" alt="Done task icon" style="width: 30px; height: 30px" class="me-2"></a>
-                <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through"><a href="{% url 'inbox_task_info' task.id %}">{{ task.task_name }}</a></span>
-                {% endif %}
-                <a href="{% url 'update_task' task.id %}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
-                <a href="{% url 'delete_task' task.id %}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        
-            </li>
-        {% endfor %}
-        </ul>
-        <!-- If 'tasks' is empty -->
+        {% if tasks|length > 0 %} <!-- Check if 'tasks' is not empty -->
+            <h4 class="w-50 mx-auto text-center mt-1">{{ done_tasks_quantity }}/{{ tasks|length }}</h4>
+            <div class="progress w-50 mx-auto" style="height: 10px;">
+                <div class="progress-bar" role="progressbar" aria-label="Example 20px high" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <ul class="list-group w-50 p-3 mx-auto"> <!-- If tasks isn't empty, output all tasks -->
+            {% for task in tasks %}
+                <li class="list-group-item bg-light mt-3 shadow-sm rounded d-flex justify-content-between">
+                    <!-- Check if task is done or not -->
+                    {% if task.status is False %} <!-- Output if task is uncompleted -->
+                        <a href="
+                            {% if project_id %}
+                                {% url 'change_status' task.id project_id %}
+                            {% else %}
+                                {% url 'change_status' task.id %}
+                            {% endif %}">
+                            <img src="{% static 'images/s_task-circle.png' %}" alt="Task icon" style="width: 30px; height: 30px" class="me-2">
+                        </a>
+                        <span class="d-flex align-items-center me-auto"><a href="{% if project_id %}{% url 'task_info' task.id project_id %}{% else %}{% url 'task_info' task.id %}{% endif %}">{{ task.task_name }}</a></span>
+                    {% else %} <!-- Output if task is completed -->
+                        <a href="
+                            {% if project_id %}
+                                {% url 'change_status' task.id project_id %}
+                            {% else %}
+                                {% url 'change_status' task.id %}
+                            {% endif %}">
+                            <img src="{% static 'images/s_task-done-circle.png' %}" alt="Done task icon" style="width: 30px; height: 30px" class="me-2">
+                        </a>
+                        <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through"><a href="{% if project_id %}{% url 'task_info' task.id project_id %}{% else %}{% url 'task_info' task.id%}{% endif %}">{{ task.task_name }}</a></span>
+                    {% endif %}
+                    <a href="{% if project_id %}{% url 'update_task' task.id project_id %}{% else %}{% url 'update_task' task.id %}{% endif %}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
+                    <a href="{% if project_id %}{% url 'delete_task' task.id project_id %}{% else %}{% url 'delete_task' task.id %}{% endif %}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        
+                </li>
+            {% endfor %}
+            </ul>
+            <!-- If 'tasks' is empty -->
         {% else %}
         <h1 class="w-50 p-3 mx-auto text-center mt-5">You have no tasks!</h1>
         {% endif %}
 
         <!-- Add new task creation button -->
         <div class="w-50 p-3 mx-auto">
-            <a href="{% url 'create_task' %}"><button class="btn btn-primary w-100" type="button">Add task</button></a>
+            <a href="
+            {% if project_id %}
+                {% url 'create_task' project_id %}
+            {% else %}
+                {% url 'create_task' %}
+            {% endif %}">
+                <button class="btn btn-primary w-100" type="button">Add task</button>
+            </a>
         </div>
-
     </div>
 </div>
-<!-- If user isn't authenticated -->
-{% else %}
-<h1 class="position-absolute top-50 start-50 translate-middle">Welcome to TOKENDO!</h1>
+{% else %} <!-- If user isn't authenticated -->
+    <h1 class="position-absolute top-50 start-50 translate-middle">Welcome to TOKENDO!</h1>
 {% endif %}
 
 {% endblock content %}

@@ -2,8 +2,7 @@
 
 {% block content %}
 
-{% if project_id %}
-<form action="{% url 'project_create_subtask' project_id task_id %}" method="POST" class="w-50 p-3 mt-5 mx-auto">
+<form action="{% if project_id %}{% url 'create_subtask' task_id project_id %}{% else %}{% url 'create_subtask' task_id %}{% endif %}" method="POST" class="w-50 p-3 mt-5 mx-auto">
     {% csrf_token %}
     <div class="mb-3">
         {% for field in form %}
@@ -11,21 +10,8 @@
             {{ field }}
         {% endfor %}
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-    <a href="{% url 'project_task_info' project_id task_id %}"><button type="button" class="btn btn-secondary">Cancel</button></a>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <button type="button" class="btn btn-secondary" onclick="Previous()">Cancel</button>
 </form>
-{% else %}
-<form action="{% url 'create_subtask' task_id %}" method="POST" class="w-50 p-3 mt-5 mx-auto">
-    {% csrf_token %}
-    <div class="mb-3">
-        {% for field in form %}
-            {{ field.label_tag }}
-            {{ field }}
-        {% endfor %}
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-    <a href="{% url 'inbox_task_info' task_id %}"><button type="button" class="btn btn-secondary">Cancel</button></a>
-</form>
-{% endif %}
 
 {% endblock content%}

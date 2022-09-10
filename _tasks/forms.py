@@ -44,7 +44,7 @@ class SubTaskEditForm(ModelForm):
         model = Task
         fields = ['task_name', 'status']
 
-    def __init__(self, profile, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(ModelForm, self).__init__(*args, **kwargs)
         self.fields['task_name'].widget.attrs.update({'class': 'form-control'})
         self.fields['status'].widget.attrs.update({'class': 'form-check-input'})

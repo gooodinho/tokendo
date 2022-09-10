@@ -19,27 +19,27 @@ def user_registration_view(request) -> Union[HttpResponseRedirect, HttpResponse]
 def user_login_view(request) -> Union[HttpResponse, HttpResponseRedirect]:
     if request.method == "POST":
         username = request.POST['username']
-        if check_user_with_username_exists(username):
-            # Check if user with such credentials exists in database. If true returns User object, if false returns None.
-            user = authenticate(request, username=username, password=request.POST['password'])
-            if user is not None:
-                login(request, user) # Create session in db and in cookies.
-                return redirect('all_tasks')
-            else:
+        # Check if user with such credentials exists in database. If true returns User object, if false returns None.
+        user = authenticate(request, username=username, password=request.POST['password'])
+        if user is not None:
+            login(request, user) # Create session in db and in cookies.
+            return redirect('inbox')
+        else:
+            if check_if_user_with_username_exists(username):
                 print('Password is incorrect')
+
     return render(request, "users/login.html")
 
 
 @login_required(login_url='login')
 def user_logout_view(request) -> HttpResponseRedirect:
     logout(request)
-    return redirect('all_tasks')
+    return redirect('inbox')
 
 
 @login_required(login_url='login')
 def user_profile_view(request) -> HttpResponse:
-    profile = request.user.profile
-    return render(request, "users/profile.html", {'profile': profile})
+    return render(request, "users/profile.html", {'profile': request.user.profile})
 
 
 @login_required(login_url='login')

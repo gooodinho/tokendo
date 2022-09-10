@@ -8,29 +8,44 @@ from .service import *
 from .forms import *
 
 
-@login_required(login_url='login')
-def output_inbox_or_project_tasks_view(request, project_id: UUID = None) -> Union[Http404, HttpResponse]:
-    projects = get_all_user_projects(request.user)
-    context = {'projects': projects}
-    if project_id is not None:
-        project = get_object_or_404(Project, id=project_id)
-        tasks = get_project_tasks(project)
-        done_tasks_count = tasks.filter(status=True).count()
-        try:
-            progress = done_tasks_count/tasks.count()*100
-        except ZeroDivisionError: 
-            progress = 0
-        context['tasks'], context['project_id'], context['done_tasks_count'], context['progress'] = tasks, project_id, done_tasks_count, progress
-        return render(request, '_tasks/project_tasks.html', context)
-    else:
+def output_inbox_tasks_view(request) -> HttpResponse:
+    context = {}
+    if request.user.is_authenticated is True:
+        projects = get_all_user_projects(request.user)
         tasks = get_user_inbox_tasks(request.user)
-        done_tasks_count = tasks.filter(status=True).count()
+        done_tasks_quantity = tasks.filter(status=True).count()
         try:
-            progress = done_tasks_count/tasks.count()*100
+            progress = done_tasks_quantity/tasks.count()*100
         except ZeroDivisionError: 
             progress = 0
-        context['tasks'], context['done_tasks_count'], context['progress'] = tasks, done_tasks_count, progress
-        return render(request, '_tasks/tasks.html', context)
+        print(progress)
+        context = {
+            'projects': projects,
+            'tasks': tasks,
+            'done_tasks_quantity': done_tasks_quantity,
+            'progress': progress,
+        }
+    return render(request, '_tasks/tasks.html', context)
+
+
+@login_required(login_url='login')
+def output_project_tasks_view(request, project_id: UUID) -> Union[HttpResponse, Http404]:
+    projects = get_all_user_projects(request.user)
+    project = get_object_or_404(Project, id=project_id)
+    tasks = get_project_tasks(project)
+    done_tasks_quantity = tasks.filter(status=True).count()
+    try:
+        progress = done_tasks_quantity/tasks.count()*100
+    except ZeroDivisionError: 
+        progress = 0
+    context = {
+        'tasks': tasks,
+        'projects': projects,
+        'project_id': project_id,
+        'done_tasks_quantity': done_tasks_quantity,
+        'progress': progress
+    }
+    return render(request, '_tasks/tasks.html', context)
 
 
 @login_required(login_url='login')
@@ -49,22 +64,22 @@ def create_task_view(request, project_id: UUID = None) -> Union[HttpResponseRedi
             else:
                 task.project = None
                 task.save()
-            return redirect('all_tasks')    
+            return redirect('inbox')    
     return render(request, '_tasks/create.html', {"form": form, 'project_id': project_id})
 
 
 @login_required(login_url='login')
-def delete_task_view(request, pk: int, project_id: UUID = None) -> HttpResponseRedirect:
-    delete_task(pk)
+def delete_task_view(request, task_id: UUID, project_id: UUID = None) -> HttpResponseRedirect:
+    delete_task(task_id)
     if project_id is not None:
         return redirect("project_tasks", project_id=project_id)
     else:
-        return redirect("all_tasks")
+        return redirect("inbox")
 
 
 @login_required(login_url='login')
-def update_task_view(request, pk: int, project_id: UUID = None) -> Union[HttpResponseRedirect, HttpResponse]:
-    task = get_task_by_id(pk)
+def update_task_view(request, task_id: UUID, project_id: UUID = None) -> Union[HttpResponseRedirect, HttpResponse]:
+    task = get_task_by_id(task_id)
     form = TaskEditForm(request.user.profile, instance=task)
     if request.method == "POST":
         form = TaskEditForm(request.user.profile, request.POST, instance=task)
@@ -73,21 +88,21 @@ def update_task_view(request, pk: int, project_id: UUID = None) -> Union[HttpRes
             if project_id is not None:
                 return redirect("project_tasks", project_id=project_id)
             else:
-                return redirect("all_tasks")
+                return redirect("inbox")
     return render(request, '_tasks/update.html', {'task': task, 'form': form, 'project_id': project_id})
 
 
 @login_required(login_url='login')
-def change_task_status_view(request, pk: UUID, project_id: UUID = None) -> HttpResponseRedirect:
-    change_task_status(pk)
-    if project_id is not None:
-        return redirect("project_tasks", project_id=project_id)
+def change_task_status_view(request, task_id: UUID, project_id: UUID = None) -> HttpResponseRedirect:
+    change_task_status(task_id)
+    if project_id:
+        return redirect("project_tasks", project_id)
     else:
-        return redirect("all_tasks")
+        return redirect("inbox")
 
 
 @login_required(login_url='login')
-def create_project_view(request, project_id: UUID = None):
+def create_project_view(request):
     form = ProjectForm()
     if request.method == "POST":
         form = ProjectForm(request.POST)
@@ -97,12 +112,12 @@ def create_project_view(request, project_id: UUID = None):
             project.owner = profile
             project.save()
             return redirect("project_tasks", project_id=project.id)
-    return render(request, '_tasks/create_project.html', {"form": form, "project_id": project_id})
+    return render(request, '_tasks/create_project.html', {"form": form})
 
 
 @login_required(login_url='login')
 def task_info_view(request, task_id: UUID, project_id: UUID = None):
-    task = get_task_by_id(task_id)
+    task = get_object_or_404(Task, id=task_id)
     subtasks = get_all_subtasks(task)
     done_subtasks = subtasks.filter(status=True).count()
     try:
@@ -123,41 +138,41 @@ def create_subtask_view(request, task_id: UUID, project_id: UUID = None):
             subtask.task = get_task_by_id(task_id)
             subtask.save()
             if project_id:
-                return redirect("project_task_info", project_id=project_id, task_id=task_id)
+                return redirect("task_info", task_id=task_id, project_id=project_id)
             else:
-                return redirect('inbox_task_info', task_id=task_id)    
+                return redirect('task_info', task_id=task_id)    
     return render(request, '_tasks/create_subtask.html', {"form": form, 'task_id': task_id, 'project_id': project_id})
 
 
 @login_required(login_url='login')
-def change_subtask_status_view(request, pk: UUID, project_id: UUID = None):
-    subtask = change_subtask_status(pk)
+def change_subtask_status_view(request, subtask_id: UUID, project_id: UUID = None):
+    subtask = change_subtask_status(subtask_id)
     if project_id is not None:
-        return redirect("project_task_info", project_id=project_id, task_id=subtask.task.id)
+        return redirect("task_info", task_id=subtask.task.id, project_id=project_id)
     else:
-        return redirect("inbox_task_info", task_id=subtask.task.id)
+        return redirect("task_info", task_id=subtask.task.id)
 
 
 @login_required(login_url='login')
-def delete_subtask_view(request, pk: UUID, project_id: UUID = None):
-    subtask = get_subtask_by_id(pk)
-    delete_subtask(pk)
+def delete_subtask_view(request, subtask_id: UUID, project_id: UUID = None):
+    subtask = get_subtask_by_id(subtask_id)
+    delete_subtask(subtask_id)
     if project_id is not None:
-        return redirect("project_task_info", project_id=project_id, task_id=subtask.task.id)
+        return redirect("task_info", task_id=subtask.task.id, project_id=project_id)
     else:
-        return redirect("inbox_task_info", task_id=subtask.task.id)
+        return redirect("task_info", task_id=subtask.task.id)
 
 
 @login_required(login_url='login')
-def update_subtask_view(request, pk: UUID, project_id: UUID = None):
-    subtask = get_subtask_by_id(pk)
-    form = SubTaskEditForm(request.user.profile, instance=subtask)
+def update_subtask_view(request, subtask_id: UUID, project_id: UUID = None):
+    subtask = get_subtask_by_id(subtask_id)
+    form = SubTaskEditForm(instance=subtask)
     if request.method == "POST":
-        form = SubTaskEditForm(request.user.profile, request.POST, instance=subtask)
+        form = SubTaskEditForm(request.POST, instance=subtask)
         if form.is_valid():
             form.save()
             if project_id is not None:
-                return redirect("project_task_info", project_id=project_id, task_id=subtask.task.id)
+                return redirect("task_info", task_id=subtask.task.id, project_id=project_id)
             else:
-                return redirect("inbox_task_info", task_id=subtask.task.id)
+                return redirect("task_info", task_id=subtask.task.id)
     return render(request, '_tasks/update_subtask.html', {'subtask': subtask, 'form': form, 'project_id': project_id})

@@ -7,7 +7,7 @@ from .forms import CustomUserCreationForm
 
 
 def register_new_user_request_handler(request) -> None:
-    """Register new user, if data from CustomUserCreationForm is valid. Login user after registration."""
+    """Register new user, if data from CustomUserCreationForm is valid. Login user after the registration."""
     form = CustomUserCreationForm(request.POST)
     if form.is_valid():
         user = form.save()
@@ -15,7 +15,7 @@ def register_new_user_request_handler(request) -> None:
         login(request, user)
 
 
-def check_user_with_username_exists(username: str) -> bool:
+def check_if_user_with_username_exists(username: str) -> bool:
     """Check if user with specific username exists."""
     try:
         User.objects.get(username=username)
@@ -25,22 +25,13 @@ def check_user_with_username_exists(username: str) -> bool:
         return False
 
 
-def check_profile_with_id_exists(id: int) -> bool:
-    """Check if Profile with specific id exists."""
-    try:
-        Profile.objects.get(id=id)
-        return True
-    except Profile.DoesNotExist:
-        return False
-
-
 def create_profile(user: User, username: str, email: str, name: str = None) -> Profile:
     """Create Profile object for specific user, with username, email and name."""
     profile = Profile.objects.create(
         user=user,
-        name=name,
         username=username,
-        email=email
+        email=email,
+        name=name
     )
     profile.save()
     return profile

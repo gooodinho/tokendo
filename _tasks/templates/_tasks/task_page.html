@@ -5,11 +5,7 @@
 {% block content %}
 <h2 class="w-50 p-3 mx-auto text-center mt-5">{{ task.task_name }}</h2>
 <div class="w-50 p-3 mx-auto">
-    {% if project_id %}
-    <a href="{% url 'project_tasks' project_id %}"><img src="{% static 'images/back.svg' %}" alt="Back" style="width: 30px; height: 30px"/></a>
-    {% else %}
-    <a href="{% url 'all_tasks' %}"><img src="{% static 'images/back.svg' %}" alt="Back" style="width: 30px; height: 30px"/></a>
-    {% endif%}
+    <a href="{% if project_id %}{% url 'project_tasks' project_id %}{% else %}{% url 'inbox' %}{% endif %}"><img src="{% static 'images/back.svg' %}" alt="Back" style="width: 30px; height: 30px"/></a>
 </div>
 
 <div class="flex-fill">
@@ -17,56 +13,51 @@
 
     <!-- Check if 'tasks' is not empty -->
     {% if subtasks|length > 0 %}
-    <h4 class="w-50 mx-auto text-center mt-1">{{ done_subtasks_count }}/{{ subtasks|length }}</h4>
-    <div class="progress w-50 mx-auto" style="height: 10px;">
-        <div class="progress-bar" role="progressbar" aria-label="Example 20px high" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-    </div>
-    <!-- If tasks isn't empty, output all tasks -->
-    <ul class="list-group w-50 p-3 mx-auto">
-    {% for subtask in subtasks %}
-        <!-- Check if task is done or not -->
-        <li class="list-group-item bg-light mt-3 shadow-sm rounded d-flex justify-content-between">
-            <!-- Output if task is uncompleted -->
-            {% if subtask.status is False %}
-                {% if project_id %}
-                <a href="{% url 'project_change_subtask_status' project_id subtask.id %}"><img src="{% static 'images/s_task-circle.png' %}" alt="Task icon" style="width: 30px; height: 30px" class="me-2"></a>
-                <span class="d-flex align-items-center me-auto">{{ subtask.task_name }}</span>
+        <h4 class="w-50 mx-auto text-center mt-1">{{ done_subtasks_count }}/{{ subtasks|length }}</h4>
+        <div class="progress w-50 mx-auto" style="height: 10px;">
+            <div class="progress-bar" role="progressbar" aria-label="Example 20px high" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <!-- If tasks isn't empty, output all tasks -->
+        <ul class="list-group w-50 p-3 mx-auto">
+        {% for subtask in subtasks %}
+            <!-- Check if task is done or not -->
+            <li class="list-group-item bg-light mt-3 shadow-sm rounded d-flex justify-content-between">
+                <!-- Output if task is uncompleted -->
+                {% if subtask.status is False %}
+                    <a href="
+                        {% if project_id %}
+                            {% url 'change_subtask_status' subtask.id project_id %}
+                        {% else %}
+                            {% url 'change_subtask_status' subtask.id %}
+                        {% endif %}">
+                        <img src="{% static 'images/s_task-circle.png' %}" alt="Task icon" style="width: 30px; height: 30px" class="me-2">
+                    </a>
+                    <span class="d-flex align-items-center me-auto">{{ subtask.task_name }}</span>
                 {% else %}
-                <a href="{% url 'change_subtask_status' subtask.id %}"><img src="{% static 'images/s_task-circle.png' %}" alt="Task icon" style="width: 30px; height: 30px" class="me-2"></a>
-                <span class="d-flex align-items-center me-auto">{{ subtask.task_name }}</span>
+                    <a href="
+                        {% if project_id %}
+                            {% url 'change_subtask_status' subtask.id project_id %}
+                        {% else %}
+                            {% url 'change_subtask_status' subtask.id %}
+                        {% endif %}">
+                        <img src="{% static 'images/s_task-done-circle.png' %}" alt="Done task icon" style="width: 30px; height: 30px" class="me-2">
+                    </a>
+                    <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through">{{ subtask.task_name }}</span>
                 {% endif %}
-            {% else %}
-                {% if project_id %}
-                <a href="{% url 'project_change_subtask_status' project_id subtask.id %}"><img src="{% static 'images/s_task-done-circle.png' %}" alt="Done task icon" style="width: 30px; height: 30px" class="me-2"></a>
-                <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through">{{ subtask.task_name }}</span>
-                {% else %}
-                <a href="{% url 'change_subtask_status' subtask.id %}"><img src="{% static 'images/s_task-done-circle.png' %}" alt="Done task icon" style="width: 30px; height: 30px" class="me-2"></a>
-                <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through">{{ subtask.task_name }}</span>
-                {% endif %}
-            {% endif %}
-            {% if project_id %}
-            <a href="{% url 'project_update_subtask' project_id subtask.id %}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
-            <a href="{% url 'project_delete_subtask' project_id subtask.id %}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        
-            {% else %}
-            <a href="{% url 'update_subtask' subtask.id %}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
-            <a href="{% url 'delete_subtask' subtask.id %}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>     
-            {% endif %}
-        </li>
-    {% endfor %}
-    </ul>
+                <a href="{% if project_id %}{% url 'update_subtask' subtask.id project_id %}{% else %}{% url 'update_subtask' subtask.id %}{% endif %}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
+                <a href="{% if project_id %}{% url 'delete_subtask' subtask.id project_id %}{% else %}{% url 'delete_subtask' subtask.id %}{% endif %}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        
+            </li>
+        {% endfor %}
+        </ul>
     <!-- If 'subtasks' is empty -->
     {% else %}
-    <h1 class="w-50 p-3 mx-auto text-center mt-5">There are no subtasks!</h1>
+        <h1 class="w-50 p-3 mx-auto text-center mt-5">There are no subtasks!</h1>
     {% endif %}
 
     <!-- Add new subtask creation button -->
     <div class="w-50 p-3 mx-auto">
-        {% if project_id %}
-        <a href="{% url 'project_create_subtask' project_id task.id %}"><button class="btn btn-primary w-100" type="button">Add subtask</button></a>
-        {% else %}
-        <a href="{% url 'create_subtask' task.id %}"><button class="btn btn-primary w-100" type="button">Add subtask</button></a>
-        {% endif %}
+        <a href="{% if project_id %}{% url 'create_subtask' task.id project_id %}{% else %}{% url 'create_subtask' task.id %}{% endif %}"><button class="btn btn-primary w-100" type="button">Add subtask</button></a>
     </div>
-
 </div>
+
 {% endblock content %}
