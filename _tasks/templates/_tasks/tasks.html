@@ -32,28 +32,18 @@
                 <li class="list-group-item bg-light mt-3 shadow-sm rounded d-flex justify-content-between">
                     <!-- Check if task is done or not -->
                     {% if task.status is False %} <!-- Output if task is uncompleted -->
-                        <a href="
-                            {% if project_id %}
-                                {% url 'change_status' task.id project_id %}
-                            {% else %}
-                                {% url 'change_status' task.id %}
-                            {% endif %}">
+                        <a href="{% url 'change_status' task.id %}?next={{ request.path|urlencode }}">
                             <img src="{% static 'images/s_task-circle.png' %}" alt="Task icon" style="width: 30px; height: 30px" class="me-2">
                         </a>
-                        <span class="d-flex align-items-center me-auto"><a href="{% if project_id %}{% url 'task_info' task.id project_id %}{% else %}{% url 'task_info' task.id %}{% endif %}">{{ task.task_name }}</a></span>
+                        <span class="d-flex align-items-center me-auto"><a href="{% url 'task_info' task.id %}?next={{ request.path|urlencode }}">{{ task.task_name }}</a></span>
                     {% else %} <!-- Output if task is completed -->
-                        <a href="
-                            {% if project_id %}
-                                {% url 'change_status' task.id project_id %}
-                            {% else %}
-                                {% url 'change_status' task.id %}
-                            {% endif %}">
+                        <a href="{% url 'change_status' task.id %}?next={{ request.path|urlencode }}">
                             <img src="{% static 'images/s_task-done-circle.png' %}" alt="Done task icon" style="width: 30px; height: 30px" class="me-2">
                         </a>
-                        <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through"><a href="{% if project_id %}{% url 'task_info' task.id project_id %}{% else %}{% url 'task_info' task.id%}{% endif %}">{{ task.task_name }}</a></span>
+                        <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through"><a href="{% url 'task_info' task.id%}?next={{ request.path|urlencode }}">{{ task.task_name }}</a></span>
                     {% endif %}
-                    <a href="{% if project_id %}{% url 'update_task' task.id project_id %}{% else %}{% url 'update_task' task.id %}{% endif %}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
-                    <a href="{% if project_id %}{% url 'delete_task' task.id project_id %}{% else %}{% url 'delete_task' task.id %}{% endif %}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        
+                    <a href="{% url 'update_task' task.id %}?next={{ request.path|urlencode }}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
+                    <a href="{% url 'delete_task' task.id %}?next={{ request.path|urlencode }}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        
                 </li>
             {% endfor %}
             </ul>
@@ -64,12 +54,7 @@
 
         <!-- Add new task creation button -->
         <div class="w-50 p-3 mx-auto">
-            <a href="
-            {% if project_id %}
-                {% url 'create_task' project_id %}
-            {% else %}
-                {% url 'create_task' %}
-            {% endif %}">
+            <a href="{% url 'create_task' %}?next={{ request.path|urlencode }}">
                 <button class="btn btn-primary w-100" type="button">Add task</button>
             </a>
         </div>

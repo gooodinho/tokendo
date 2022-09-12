@@ -5,7 +5,8 @@
 {% block content %}
 <h2 class="w-50 p-3 mx-auto text-center mt-5">{{ task.task_name }}</h2>
 <div class="w-50 p-3 mx-auto">
-    <a href="{% if project_id %}{% url 'project_tasks' project_id %}{% else %}{% url 'inbox' %}{% endif %}"><img src="{% static 'images/back.svg' %}" alt="Back" style="width: 30px; height: 30px"/></a>
+    <a href="{{ request.GET.next }}">
+    <button type="button" class="btn btn-primary" onclick="Previous()"><img src="{% static 'images/back.svg' %}" alt="Back" style="width: 30px; height: 30px"/></a></button>
 </div>
 
 <div class="flex-fill">
@@ -24,28 +25,18 @@
             <li class="list-group-item bg-light mt-3 shadow-sm rounded d-flex justify-content-between">
                 <!-- Output if task is uncompleted -->
                 {% if subtask.status is False %}
-                    <a href="
-                        {% if project_id %}
-                            {% url 'change_subtask_status' subtask.id project_id %}
-                        {% else %}
-                            {% url 'change_subtask_status' subtask.id %}
-                        {% endif %}">
+                    <a href="{% url 'change_subtask_status' subtask.id %}?next={{ request.path|urlencode }}">
                         <img src="{% static 'images/s_task-circle.png' %}" alt="Task icon" style="width: 30px; height: 30px" class="me-2">
                     </a>
                     <span class="d-flex align-items-center me-auto">{{ subtask.task_name }}</span>
                 {% else %}
-                    <a href="
-                        {% if project_id %}
-                            {% url 'change_subtask_status' subtask.id project_id %}
-                        {% else %}
-                            {% url 'change_subtask_status' subtask.id %}
-                        {% endif %}">
+                    <a href="{% url 'change_subtask_status' subtask.id %}?next={{ request.path|urlencode }}">
                         <img src="{% static 'images/s_task-done-circle.png' %}" alt="Done task icon" style="width: 30px; height: 30px" class="me-2">
                     </a>
                     <span class="d-flex align-items-center me-auto fst-italic text-decoration-line-through">{{ subtask.task_name }}</span>
                 {% endif %}
-                <a href="{% if project_id %}{% url 'update_subtask' subtask.id project_id %}{% else %}{% url 'update_subtask' subtask.id %}{% endif %}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
-                <a href="{% if project_id %}{% url 'delete_subtask' subtask.id project_id %}{% else %}{% url 'delete_subtask' subtask.id %}{% endif %}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        
+                <a href="{% url 'update_subtask' subtask.id %}?next={{ request.path|urlencode }}"><img src="{% static 'images/edit-icon.svg' %}" alt="Edit" style="width: 30px; height: 30px" /></a>
+                <a href="{% url 'delete_subtask' subtask.id %}?next={{ request.path|urlencode }}"><img src="{% static 'images/s_delete-icon.png' %}" alt="Delete" style="width: 30px; height: 30px" /></a>        
             </li>
         {% endfor %}
         </ul>
@@ -56,7 +47,7 @@
 
     <!-- Add new subtask creation button -->
     <div class="w-50 p-3 mx-auto">
-        <a href="{% if project_id %}{% url 'create_subtask' task.id project_id %}{% else %}{% url 'create_subtask' task.id %}{% endif %}"><button class="btn btn-primary w-100" type="button">Add subtask</button></a>
+        <a href="{% url 'create_subtask' task.id %}?next={{ request.path|urlencode }}"><button class="btn btn-primary w-100" type="button">Add subtask</button></a>
     </div>
 </div>
 

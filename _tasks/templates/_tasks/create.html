@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form action="{% if project_id %}{% url 'create_task' project_id %}{% else %}{% url 'create_task' %}{% endif %}" method="POST" class="w-50 p-3 mt-5 mx-auto">
+<form action="{% url 'create_task' %}" method="POST" class="w-50 p-3 mt-5 mx-auto">
     {% csrf_token %}
     <div class="mb-3">
         {% for field in form %}
@@ -10,6 +10,7 @@
             {{ field }}
         {% endfor %}
     </div>
+    <input type="hidden" name="next" value="{{ request.GET.next }}">
     <button type="submit" class="btn btn-primary">Create</button>
     <button type="button" class="btn btn-secondary" onclick="Previous()">Cancel</button>
 </form>
