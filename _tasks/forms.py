@@ -37,6 +37,7 @@ class TaskEditForm(ModelForm):
         self.fields['task_name'].widget.attrs.update({'class': 'form-control'})
         self.fields['status'].widget.attrs.update({'class': 'form-check-input'})
         self.fields['project'].queryset = Project.objects.filter(owner=profile)
+        self.fields['project'].empty_label = "Inbox"
 
 
 class SubTaskEditForm(ModelForm):
