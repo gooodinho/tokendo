@@ -3,16 +3,24 @@ from django.contrib.auth import login
 from django.db.models.fields.files import ImageFieldFile
 
 from .models import Profile
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ProfileForm
 
 
-def register_new_user_request_handler(request) -> None:
-    """Register new user, if data from CustomUserCreationForm is valid. Login user after the registration."""
+def register_new_user(request) -> None:
+    """Register new user, if data from CustomUserCreationForm is valid."""
     form = CustomUserCreationForm(request.POST)
     if form.is_valid():
-        user = form.save()
-        # Create new session
-        login(request, user)
+        form.save()       
+    else:
+        raise Exception
+
+
+def update_profile_handler(request, profile) -> None:
+    form = ProfileForm(request.POST, request.FILES, instance=profile)
+    if form.is_valid():
+        profile = form.save()
+    else:
+        raise Exception("Form data are not correct!")
 
 
 def check_if_user_with_username_exists(username: str) -> bool:
@@ -36,7 +44,7 @@ def create_profile(user: User, username: str, email: str, name: str = None) -> P
     profile.save()
     return profile
 
-
+# Проверить используеться ли где-то
 def update_profile(profile: Profile, username: str, name: str, email: str, profile_image) -> Profile:
     """Update existing Profile object, with new username, name, email and profile_image."""
     profile.username = username
