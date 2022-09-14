@@ -155,5 +155,8 @@ def update_subtask_view(request, subtask_id: UUID):
         form = SubTaskEditForm(request.POST, instance=subtask)
         if form.is_valid():
             form.save()
+            messages.success(request, "Subtask was successfully updated!")
             return redirect(next)
+        else:
+            messages.warning(request, "Form data are not correct")
     return render(request, '_tasks/update_subtask.html', {'subtask': subtask, 'form': form})

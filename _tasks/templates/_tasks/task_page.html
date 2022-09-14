@@ -5,8 +5,8 @@
 {% block content %}
 <h2 class="w-50 p-3 mx-auto text-center mt-5">{{ task.task_name }}</h2>
 <div class="w-50 p-3 mx-auto">
-    <a href="{{ request.GET.next }}">
-    <button type="button" class="btn btn-primary" onclick="Previous()"><img src="{% static 'images/back.svg' %}" alt="Back" style="width: 30px; height: 30px"/></a></button>
+    <a href="{% if task.project is None %}{% url 'inbox' %}{% else %}{% url 'project_tasks' task.project.id %}{% endif %}">
+    <button type="button" class="btn btn-primary"><img src="{% static 'images/back.svg' %}" alt="Back" style="width: 30px; height: 30px"/></a></button>
 </div>
 
 <div class="flex-fill">
