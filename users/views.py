@@ -13,7 +13,7 @@ from .forms import ProfileForm
 def user_registration_view(request) -> Union[HttpResponseRedirect, HttpResponse]:
     if request.method == "POST":
         try:
-            register_new_user(request)
+            register_new_user_handler(request)
             messages.success(request, 'You were successfully registered!')
             return redirect('login')
         except Exception:
@@ -34,7 +34,6 @@ def user_login_view(request) -> Union[HttpResponse, HttpResponseRedirect]:
                 messages.warning(request, 'Password is incorrect!')
             else:
                 messages.warning(request, 'User with this username does not exist!')
-
     return render(request, "users/login.html")
 
 
@@ -59,7 +58,7 @@ def user_profile_edit_view(request) -> Union[HttpResponse, HttpResponseRedirect]
             update_profile_handler(request, profile)
             messages.success(request, 'Profile was successfully updated!')
             return redirect('profile')
-        except Exception as e:
-            messages.warning(request, e)
+        except Exception:
+            messages.warning(request, "Form data are not correct")
     context = {'profile': profile, 'form': form}
     return render(request, "users/profile_edit.html", context)

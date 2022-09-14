@@ -145,3 +145,4 @@ db_diagram.drawio
 *.png
 !s_*.png
 *.jpeg
+*.webp

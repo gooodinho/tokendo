@@ -3,6 +3,7 @@ from typing import Union
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .service import *
 from .forms import *
@@ -18,7 +19,6 @@ def output_inbox_tasks_view(request) -> HttpResponse:
             progress = done_tasks_quantity/tasks.count()*100
         except ZeroDivisionError: 
             progress = 0
-        print(progress)
         context = {
             'projects': projects,
             'tasks': tasks,
@@ -54,15 +54,12 @@ def create_task_view(request) -> Union[HttpResponseRedirect, HttpResponse]:
     if request.method == "POST":
         next = request.POST.get('next', '/')
         form = TaskForm(request.POST)
-        if form.is_valid():
-            profile = request.user.profile
-            task = form.save(commit=False)
-            task.owner = profile
-            task.project = None 
-            if next != "/":
-                task.project = get_project_by_id(next.replace('/', ''))
-            task.save()
+        try:
+            create_task_handler(request, next)
+            messages.success(request, "Task was successfully created!")
             return redirect(next)
+        except Exception:
+            messages.warning(request, "Form data are not correct")
     return render(request, '_tasks/create.html', {"form": form})
 
 
@@ -70,6 +67,7 @@ def create_task_view(request) -> Union[HttpResponseRedirect, HttpResponse]:
 def delete_task_view(request, task_id: UUID) -> HttpResponseRedirect:
     delete_task(task_id)
     next = request.GET.get('next', '/')
+    messages.success(request, "Task was successfully deleted!")
     return redirect(next)
 
 
@@ -82,7 +80,10 @@ def update_task_view(request, task_id: UUID) -> Union[HttpResponseRedirect, Http
         form = TaskEditForm(request.user.profile, request.POST, instance=task)
         if form.is_valid():
             form.save()
+            messages.success(request, "Task was successfully updated!")
             return redirect(next)
+        else:
+            messages.warning(request, "Form data are not correct")
     return render(request, '_tasks/update.html', {'task': task, 'form': form})
 
 
@@ -96,13 +97,12 @@ def change_task_status_view(request, task_id: UUID) -> HttpResponseRedirect:
 def create_project_view(request):
     form = ProjectForm()
     if request.method == "POST":
-        form = ProjectForm(request.POST)
-        if form.is_valid():
-            profile = request.user.profile
-            project = form.save(commit=False)
-            project.owner = profile
-            project.save()
+        try:
+            project = create_project_handler(request)
+            messages.success(request, "Project was successfully created!")
             return redirect("project_tasks", project_id=project.id)
+        except Exception:
+            messages.warning(request, "Form data are not correct")
     return render(request, '_tasks/create_project.html', {"form": form})
 
 
@@ -123,13 +123,12 @@ def create_subtask_view(request, task_id: UUID):
     form = SubTaskForm()
     if request.method == "POST":
         next = request.POST.get('next', '/')
-        form = SubTaskForm(request.POST)
-        if form.is_valid():
-            subtask = form.save(commit=False)
-            subtask.owner = request.user.profile
-            subtask.task = get_task_by_id(task_id)
-            subtask.save()
-            return redirect(next) 
+        try:
+            create_subtask_handler(request, task_id)
+            messages.success(request, "Subtask was successfully created!")
+            return redirect(next)
+        except Exception:
+            messages.warning(request, "Form data are not correct")
     return render(request, '_tasks/create_subtask.html', {"form": form, 'task_id': task_id})
 
 
@@ -142,9 +141,9 @@ def change_subtask_status_view(request, subtask_id: UUID):
 
 @login_required(login_url='login')
 def delete_subtask_view(request, subtask_id: UUID):
-    get_subtask_by_id(subtask_id)
     delete_subtask(subtask_id)
     next = request.GET.get('next', '/')
+    messages.success(request, "Subtask was successfully deleted!")
     return redirect(next)
 
 @login_required(login_url='login')
