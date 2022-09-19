@@ -28,7 +28,6 @@ def check_if_user_with_username_exists(username: str) -> bool:
         User.objects.get(username=username)
         return True
     except User.DoesNotExist:
-        print(f'User with username "{username}" does not exist!')
         return False
 
 
